@@ -81,6 +81,55 @@ net start MongoDB
 docker run -d -p 27017:27017 --name mongodb mongo:latest
 ```
 
+### 3a. MongoDB Atlas (Cloud Alternative)
+
+If using MongoDB Atlas instead of local MongoDB:
+
+**1. Create Atlas Account & Cluster:**
+- Sign up at https://cloud.mongodb.com
+- Create free M0 cluster (512MB storage)
+- Note your cluster name (e.g., `cluster0`)
+
+**2. Create Database User:**
+- Navigate to: **Database Access** → **Add New Database User**
+- **Username:** `nail_salon_api_user` (or your preference)
+- **Password:** Click "Autogenerate Secure Password" (copy immediately)
+- **Privileges:** "Read and write to any database"
+- Click "Add User"
+
+**3. Configure Network Access:**
+- Navigate to: **Network Access** → **Add IP Address**
+- **Development:** Click "Add Current IP Address"
+- **Production:** Add your server IP range
+- ⚠️ **Never use** `0.0.0.0/0` (allow all) in production
+
+**4. Get Connection String:**
+- Navigate to: **Clusters** → **Connect** → **Connect your application**
+- Select: **Drivers** → **Node.js** → **Version 5.5 or later**
+- Copy the connection string
+
+**5. Update `.env`:**
+```env
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/nail-salon-dev?retryWrites=true&w=majority
+```
+
+**Example:**
+```env
+MONGODB_URI=mongodb+srv://nail_salon_api_user:YOUR_PASSWORD@cluster0.m6ia2tj.mongodb.net/nail-salon-dev?retryWrites=true&w=majority
+```
+
+**6. Verify Connection:**
+```bash
+npm run start:dev
+# Watch for: "MongoDB connected successfully"
+```
+
+**Atlas Free Tier Limits:**
+- **Storage:** 512MB
+- **RAM:** Shared
+- **Connections:** 500 max
+- **Backups:** Manual only (auto-backup requires paid tier)
+
 ### 4. Start the API
 
 ```bash

@@ -40,6 +40,114 @@ MONGODB_URI=mongodb://username:password@localhost:27017/nail-salon?authSource=ad
 
 ---
 
+## MongoDB Atlas Connection Issues
+
+### Error: `MongooseServerSelectionError: connect ETIMEDOUT`
+
+**Cause:** IP address not whitelisted in MongoDB Atlas
+
+**Solution:**
+1. Go to MongoDB Atlas dashboard: https://cloud.mongodb.com
+2. Navigate to: **Network Access** → **IP Access List**
+3. Click **"Add IP Address"**
+4. Click **"Add Current IP Address"** (for development)
+5. For production: Add your server's IP range
+6. Wait 2-3 minutes for changes to propagate
+7. Restart your application
+
+**Verify:**
+```bash
+# Test connection
+npm run start:dev
+# Should see: "MongoDB connected successfully"
+```
+
+### Error: `MongoServerError: bad auth: Authentication failed`
+
+**Cause:** Incorrect username or password in `MONGODB_URI`
+
+**Solution:**
+1. Verify credentials in Atlas: **Database Access** → View user
+2. If needed, reset password: **Edit** → **Edit Password** → **Autogenerate**
+3. Update `.env` with correct credentials:
+```env
+MONGODB_URI=mongodb+srv://USERNAME:PASSWORD@cluster0.m6ia2tj.mongodb.net/nail-salon-dev?retryWrites=true&w=majority
+```
+4. Ensure no special characters in password are unencoded (use URL encoding if needed)
+
+### Error: `ENOTFOUND cluster0.m6ia2tj.mongodb.net`
+
+**Cause:** DNS resolution failure or cluster paused/deleted
+
+**Solution:**
+1. Check cluster status in Atlas dashboard
+2. Verify cluster name in connection string matches Atlas
+3. Check internet connection
+4. Try different DNS:
+```bash
+# macOS/Linux
+sudo networksetup -setdnsservers Wi-Fi 8.8.8.8 8.8.4.4
+
+# Windows
+ipconfig /flushdns
+```
+
+### Error: `MongoParseError: Invalid connection string`
+
+**Cause:** Incorrect MongoDB URI format
+
+**Solution:** Ensure URI follows correct format:
+```env
+# Correct format for Atlas
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority
+
+# NOT mongosh CLI format (incorrect):
+# mongosh "mongodb+srv://cluster.mongodb.net/" --username user --password pass
+```
+
+**Format breakdown:**
+- Protocol: `mongodb+srv://` (for Atlas)
+- Auth: `username:password@`
+- Host: `cluster0.m6ia2tj.mongodb.net`
+- Database: `/nail-salon-dev`
+- Options: `?retryWrites=true&w=majority`
+
+### Error: `Topology was destroyed`
+
+**Cause:** Connection interrupted or cluster restarted
+
+**Solution:**
+1. Check Atlas cluster status (may be paused on free tier after inactivity)
+2. Resume cluster if paused
+3. Restart application
+4. Enable connection retry in production:
+```typescript
+// Already configured in src/app.module.ts
+MongooseModule.forRootAsync({
+  useFactory: () => ({
+    uri: process.env.MONGODB_URI,
+    maxPoolSize: 10,
+  }),
+})
+```
+
+### Atlas Free Tier Limitations
+
+**Storage limit exceeded (512MB):**
+- **Solution:** Upgrade to paid tier or delete old data
+- **Monitor:** Atlas → Metrics → Storage
+
+**Connection limit (500 concurrent):**
+- **Solution:** Reduce `MONGODB_MAX_POOL_SIZE` in `.env`
+- **Default:** 10 (safe for free tier)
+
+**Cluster paused after inactivity:**
+- **Cause:** Free tier pauses after 60 days inactivity
+- **Solution:** Resume cluster in Atlas dashboard
+- **Prevention:** Ping database periodically or upgrade
+
+---
+
 ## JWT Configuration Issues
 
 ### Error: `JWT secrets not configured`
