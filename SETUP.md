@@ -1,0 +1,224 @@
+# Nail Salon API - Setup Guide
+
+## 🎉 Current Status
+
+**Phases Completed: 3/8** (Foundation, Database, Authentication)
+
+### ✅ What's Working
+- **Configuration**: Type-safe environment config with validation
+- **Security**: Helmet, CORS, validation pipes
+- **Database**: MongoDB with 8 schemas (Services, Bookings, Gallery, Banners, Contacts, BusinessInfo, HeroSettings, Admin)
+- **Authentication**: JWT with refresh token rotation, Argon2 hashing
+
+### 🔧 Not Yet Implemented
+- Services, Bookings, Gallery, Banners, Contacts, BusinessInfo, HeroSettings CRUD APIs
+- Firebase Storage integration
+- Redis rate limiting
+- Unit & E2E tests
+
+**See [QUICK_START.md](./QUICK_START.md) for 5-minute setup**
+
+---
+
+## 📋 Prerequisites
+
+- **Node.js** v18+
+- **MongoDB** running on port 27017 (or update `.env`)
+- **Redis** (optional, for Phase 06)
+- **Firebase** (optional, for Phase 07)
+
+---
+
+## 🚀 Installation
+
+### 1. Install Dependencies
+```bash
+npm install  # Already done
+```
+
+### 2. Configure Environment
+
+Update `.env` with your credentials:
+
+```env
+# Database
+MONGODB_URI=mongodb://localhost:27017/nail-salon
+
+# JWT Secrets (CHANGE IN PRODUCTION)
+JWT_ACCESS_SECRET=your-strong-64-char-secret-here
+JWT_REFRESH_SECRET=your-strong-64-char-secret-here
+
+# Frontend URLs
+FRONTEND_CLIENT_URL=http://localhost:5173
+FRONTEND_ADMIN_URL=http://localhost:5174
+
+# Firebase (Configure in Phase 07)
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_PRIVATE_KEY=your-private-key
+FIREBASE_CLIENT_EMAIL=your-email@project.iam.gserviceaccount.com
+FIREBASE_STORAGE_BUCKET=your-bucket.appspot.com
+```
+
+**Generate secure JWT secrets:**
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+### 3. Start MongoDB
+
+**macOS:**
+```bash
+brew services start mongodb-community
+```
+
+**Windows:**
+```bash
+net start MongoDB
+```
+
+**Docker:**
+```bash
+docker run -d -p 27017:27017 --name mongodb mongo:latest
+```
+
+### 4. Start the API
+
+```bash
+npm run start:dev
+```
+
+Server runs on `http://localhost:3000`
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── config/                      # ✅ Environment configuration
+├── modules/
+│   ├── auth/                    # ✅ Authentication (COMPLETE)
+│   ├── services/                # ⏳ TODO: Phase 04
+│   ├── bookings/                # ⏳ TODO: Phase 04
+│   ├── gallery/                 # ⏳ TODO: Phase 04
+│   ├── banners/                 # ⏳ TODO: Phase 05
+│   ├── contacts/                # ⏳ TODO: Phase 05
+│   ├── business-info/           # ⏳ TODO: Phase 05
+│   └── hero-settings/           # ⏳ TODO: Phase 05
+├── app.module.ts
+└── main.ts
+```
+
+---
+
+## 🧪 Testing
+
+**Health check:**
+```bash
+curl http://localhost:3000/health
+```
+
+**Register admin:**
+```bash
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "admin@example.com",
+    "password": "password123",
+    "name": "Admin User"
+  }'
+```
+
+---
+
+## 📚 Documentation
+
+- **[QUICK_START.md](./QUICK_START.md)** - 5-minute setup
+- **[docs/API_DOCUMENTATION.md](./docs/API_DOCUMENTATION.md)** - API reference
+- **[docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** - Common issues
+- **[Implementation Plan](./plans/251212-1917-nail-api-implementation/plan.md)** - Detailed roadmap
+
+---
+
+## 🔐 Security Features
+
+### ✅ Implemented
+- Helmet.js security headers
+- CORS for React frontends
+- JWT with refresh token rotation
+- Argon2 password hashing
+- Global validation pipes
+- Protected routes by default
+
+### ⏳ TODO
+- Redis rate limiting (Phase 06)
+- Request logging
+- API versioning
+
+---
+
+## 🗄️ Database Schemas
+
+8 schemas ready with indexes:
+- **Admin** - Auth users
+- **Service** - Nail services
+- **Booking** - Appointments
+- **Gallery** - Portfolio
+- **Banner** - Hero content
+- **Contact** - Inquiries
+- **BusinessInfo** - Details
+- **HeroSettings** - Config
+
+**See schemas:** `src/modules/*/schemas/*.schema.ts`
+
+---
+
+## 📋 Next Steps
+
+### Phase 04: Core Modules (Services, Bookings, Gallery)
+**Guide:** `plans/251212-1917-nail-api-implementation/phase-04-core-modules.md`
+
+### Phase 05: Admin Modules
+**Guide:** `plans/251212-1917-nail-api-implementation/phase-05-admin-modules.md`
+
+### Phase 06: Security (Redis)
+**Guide:** `plans/251212-1917-nail-api-implementation/phase-06-security.md`
+
+### Phase 07: Storage (Firebase)
+**Guide:** `plans/251212-1917-nail-api-implementation/phase-07-storage.md`
+
+### Phase 08: Testing
+**Guide:** `plans/251212-1917-nail-api-implementation/phase-08-testing.md`
+
+---
+
+## 🐛 Troubleshooting
+
+**See [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** for detailed solutions.
+
+Quick fixes:
+- **MongoDB not connecting?** Check if MongoDB is running
+- **JWT error?** Ensure secrets are 64+ characters
+- **CORS error?** Update frontend URLs in `.env`
+- **Port in use?** Change `PORT` in `.env`
+
+---
+
+## 🌐 Frontend Integration
+
+Update frontend API URLs to `http://localhost:3000`
+
+**Client:** `/Users/hainguyen/Documents/nail-project/nail-client`
+**Admin:** `/Users/hainguyen/Documents/nail-project/nail-admin`
+
+---
+
+## 📖 Learn More
+
+- [NestJS Docs](https://docs.nestjs.com)
+- [MongoDB with NestJS](https://docs.nestjs.com/techniques/mongodb)
+- [JWT Authentication](https://docs.nestjs.com/security/authentication)
+
+---
+
+**Happy coding! 🚀**
