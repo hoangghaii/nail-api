@@ -30,16 +30,24 @@ describe('Bookings (e2e)', () => {
 
     connection = moduleFixture.get<Connection>(getConnectionToken());
 
+    // Clean database before tests
+    await connection.collection('admins').deleteMany({});
+    await connection.collection('services').deleteMany({});
+    await connection.collection('bookings').deleteMany({});
+    await connection.collection('galleries').deleteMany({});
+    await connection.collection('banners').deleteMany({});
+    await connection.collection('contacts').deleteMany({});
+
     // Register admin and get auth token
     const registerResponse = await request(app.getHttpServer())
       .post('/auth/register')
       .send({
-        email: 'admin@test.com',
+        email: 'bookings-admin@test.com',
         password: 'Test123!@#',
-        name: 'Test Admin',
+        name: 'Bookings Test Admin',
       });
 
-    authToken = registerResponse.body.tokens.accessToken;
+    authToken = registerResponse.body.accessToken;
 
     // Create a service for booking tests
     const serviceResponse = await request(app.getHttpServer())
@@ -50,7 +58,7 @@ describe('Bookings (e2e)', () => {
         description: 'Classic manicure',
         price: 25,
         duration: 30,
-        category: 'nails',
+        category: 'manicure',
       });
 
     serviceId = serviceResponse.body._id;
@@ -246,9 +254,9 @@ describe('Bookings (e2e)', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
 
-      expect(
-        response.body.data.every((b: any) => b.status === 'pending'),
-      ).toBe(true);
+      expect(response.body.data.every((b: any) => b.status === 'pending')).toBe(
+        true,
+      );
     });
 
     it('should filter bookings by service ID', async () => {

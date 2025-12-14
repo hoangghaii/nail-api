@@ -118,10 +118,7 @@ export class BookingsService {
     return booking;
   }
 
-  private async validateTimeSlot(
-    date: Date,
-    timeSlot: string,
-  ): Promise<void> {
+  private async validateTimeSlot(date: Date, timeSlot: string): Promise<void> {
     const startDate = new Date(date);
     startDate.setHours(0, 0, 0, 0);
     const endDate = new Date(date);

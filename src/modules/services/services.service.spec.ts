@@ -7,6 +7,7 @@ import { Service, ServiceDocument } from './schemas/service.schema';
 import { CreateServiceDto, ServiceCategory } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { QueryServicesDto } from './dto/query-services.dto';
+import { StorageService } from '../storage/storage.service';
 
 describe('ServicesService', () => {
   let service: ServicesService;
@@ -36,6 +37,11 @@ describe('ServicesService', () => {
     exec: jest.fn(),
   };
 
+  const mockStorageService = {
+    uploadFile: jest.fn(),
+    deleteFile: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -43,6 +49,10 @@ describe('ServicesService', () => {
         {
           provide: getModelToken(Service.name),
           useValue: mockServiceModel,
+        },
+        {
+          provide: StorageService,
+          useValue: mockStorageService,
         },
       ],
     }).compile();
@@ -134,9 +144,7 @@ describe('ServicesService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       const result = await service.findAll(query);
 
@@ -152,7 +160,11 @@ describe('ServicesService', () => {
     });
 
     it('should filter by category', async () => {
-      const query: QueryServicesDto = { category: ServiceCategory.MANICURE, page: 1, limit: 10 };
+      const query: QueryServicesDto = {
+        category: ServiceCategory.MANICURE,
+        page: 1,
+        limit: 10,
+      };
 
       const findChain = {
         sort: jest.fn().mockReturnThis(),
@@ -162,9 +174,7 @@ describe('ServicesService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       const result = await service.findAll(query);
 
@@ -183,9 +193,7 @@ describe('ServicesService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       await service.findAll(query);
 
@@ -225,7 +233,10 @@ describe('ServicesService', () => {
         exec: jest.fn().mockResolvedValue(updatedService),
       } as any);
 
-      const result = await service.update('507f1f77bcf86cd799439011', updateDto);
+      const result = await service.update(
+        '507f1f77bcf86cd799439011',
+        updateDto,
+      );
 
       expect(result).toEqual(updatedService);
       expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
@@ -248,19 +259,23 @@ describe('ServicesService', () => {
 
   describe('remove', () => {
     it('should delete a service successfully', async () => {
+      jest.spyOn(model, 'findById').mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockService),
+      } as any);
       jest.spyOn(model, 'findByIdAndDelete').mockReturnValue({
         exec: jest.fn().mockResolvedValue(mockService),
       } as any);
 
       await service.remove('507f1f77bcf86cd799439011');
 
+      expect(model.findById).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
       expect(model.findByIdAndDelete).toHaveBeenCalledWith(
         '507f1f77bcf86cd799439011',
       );
     });
 
     it('should throw NotFoundException if service not found', async () => {
-      jest.spyOn(model, 'findByIdAndDelete').mockReturnValue({
+      jest.spyOn(model, 'findById').mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       } as any);
 

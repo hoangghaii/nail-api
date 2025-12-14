@@ -4,6 +4,7 @@ import { ServicesService } from './services.service';
 import { CreateServiceDto, ServiceCategory } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { QueryServicesDto } from './dto/query-services.dto';
+import { StorageService } from '../storage/storage.service';
 
 describe('ServicesController', () => {
   let controller: ServicesController;
@@ -29,6 +30,11 @@ describe('ServicesController', () => {
     remove: jest.fn(),
   };
 
+  const mockStorageService = {
+    uploadFile: jest.fn(),
+    deleteFile: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ServicesController],
@@ -36,6 +42,10 @@ describe('ServicesController', () => {
         {
           provide: ServicesService,
           useValue: mockServicesService,
+        },
+        {
+          provide: StorageService,
+          useValue: mockStorageService,
         },
       ],
     }).compile();
@@ -114,10 +124,16 @@ describe('ServicesController', () => {
 
       mockServicesService.update.mockResolvedValue(updatedService);
 
-      const result = await controller.update('507f1f77bcf86cd799439011', updateDto);
+      const result = await controller.update(
+        '507f1f77bcf86cd799439011',
+        updateDto,
+      );
 
       expect(result).toEqual(updatedService);
-      expect(service.update).toHaveBeenCalledWith('507f1f77bcf86cd799439011', updateDto);
+      expect(service.update).toHaveBeenCalledWith(
+        '507f1f77bcf86cd799439011',
+        updateDto,
+      );
     });
   });
 

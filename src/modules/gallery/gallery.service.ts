@@ -9,12 +9,14 @@ import { Gallery, GalleryDocument } from './schemas/gallery.schema';
 import { CreateGalleryDto } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
 import { QueryGalleryDto } from './dto/query-gallery.dto';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class GalleryService {
   constructor(
     @InjectModel(Gallery.name)
     private readonly galleryModel: Model<GalleryDocument>,
+    private readonly storageService: StorageService,
   ) {}
 
   async create(createGalleryDto: CreateGalleryDto): Promise<Gallery> {
@@ -67,7 +69,10 @@ export class GalleryService {
     return gallery;
   }
 
-  async update(id: string, updateGalleryDto: UpdateGalleryDto): Promise<Gallery> {
+  async update(
+    id: string,
+    updateGalleryDto: UpdateGalleryDto,
+  ): Promise<Gallery> {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Invalid gallery ID');
     }
@@ -88,10 +93,22 @@ export class GalleryService {
       throw new BadRequestException('Invalid gallery ID');
     }
 
-    const result = await this.galleryModel.findByIdAndDelete(id).exec();
+    const gallery = await this.galleryModel.findById(id).exec();
 
-    if (!result) {
+    if (!gallery) {
       throw new NotFoundException(`Gallery item with ID ${id} not found`);
     }
+
+    // Delete image from Firebase Storage if it exists and is a Firebase URL
+    if (gallery.imageUrl?.includes('firebasestorage.googleapis.com')) {
+      try {
+        await this.storageService.deleteFile(gallery.imageUrl);
+      } catch (error) {
+        // Log error but continue with deletion
+        console.warn(`Failed to delete image from storage: ${error.message}`);
+      }
+    }
+
+    await this.galleryModel.findByIdAndDelete(id).exec();
   }
 }

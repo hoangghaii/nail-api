@@ -29,16 +29,24 @@ describe('Services (e2e)', () => {
 
     connection = moduleFixture.get<Connection>(getConnectionToken());
 
+    // Clean database before tests
+    await connection.collection('admins').deleteMany({});
+    await connection.collection('services').deleteMany({});
+    await connection.collection('bookings').deleteMany({});
+    await connection.collection('galleries').deleteMany({});
+    await connection.collection('banners').deleteMany({});
+    await connection.collection('contacts').deleteMany({});
+
     // Register admin and get auth token
     const registerResponse = await request(app.getHttpServer())
       .post('/auth/register')
       .send({
-        email: 'admin@test.com',
+        email: 'services-admin@test.com',
         password: 'Test123!@#',
-        name: 'Test Admin',
+        name: 'Services Test Admin',
       });
 
-    authToken = registerResponse.body.tokens.accessToken;
+    authToken = registerResponse.body.accessToken;
   });
 
   afterAll(async () => {
@@ -58,7 +66,7 @@ describe('Services (e2e)', () => {
           description: 'Classic manicure service',
           price: 25,
           duration: 30,
-          category: 'nails',
+          category: 'manicure',
           featured: true,
           isActive: true,
           sortIndex: 1,
@@ -69,7 +77,7 @@ describe('Services (e2e)', () => {
       expect(response.body.name).toBe('Manicure');
       expect(response.body.price).toBe(25);
       expect(response.body.duration).toBe(30);
-      expect(response.body.category).toBe('nails');
+      expect(response.body.category).toBe('manicure');
       expect(response.body.featured).toBe(true);
 
       createdServiceId = response.body._id;
@@ -83,7 +91,7 @@ describe('Services (e2e)', () => {
           description: 'Relaxing pedicure',
           price: 35,
           duration: 45,
-          category: 'nails',
+          category: 'manicure',
         })
         .expect(401);
     });
@@ -108,7 +116,7 @@ describe('Services (e2e)', () => {
           description: 'Too fast',
           price: 10,
           duration: 10, // Invalid: less than 15
-          category: 'nails',
+          category: 'manicure',
         })
         .expect(400);
     });
@@ -122,7 +130,7 @@ describe('Services (e2e)', () => {
           description: 'Free service',
           price: -5, // Invalid: negative price
           duration: 30,
-          category: 'nails',
+          category: 'manicure',
         })
         .expect(400);
     });
@@ -136,7 +144,7 @@ describe('Services (e2e)', () => {
           description: 'Another manicure',
           price: 30,
           duration: 30,
-          category: 'nails',
+          category: 'manicure',
         })
         .expect(409);
     });
@@ -153,7 +161,7 @@ describe('Services (e2e)', () => {
           description: 'Relaxing pedicure',
           price: 35,
           duration: 45,
-          category: 'nails',
+          category: 'manicure',
           featured: false,
           isActive: true,
         });
@@ -166,7 +174,7 @@ describe('Services (e2e)', () => {
           description: 'Long-lasting gel nails',
           price: 50,
           duration: 60,
-          category: 'nails',
+          category: 'manicure',
           featured: true,
           isActive: true,
         });
@@ -195,10 +203,10 @@ describe('Services (e2e)', () => {
 
     it('should filter services by category', async () => {
       const response = await request(app.getHttpServer())
-        .get('/services?category=nails')
+        .get('/services?category=manicure')
         .expect(200);
 
-      expect(response.body.data.every((s: any) => s.category === 'nails')).toBe(
+      expect(response.body.data.every((s: any) => s.category === 'manicure')).toBe(
         true,
       );
     });

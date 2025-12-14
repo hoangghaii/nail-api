@@ -29,16 +29,24 @@ describe('Gallery (e2e)', () => {
 
     connection = moduleFixture.get<Connection>(getConnectionToken());
 
+    // Clean database before tests
+    await connection.collection('admins').deleteMany({});
+    await connection.collection('services').deleteMany({});
+    await connection.collection('bookings').deleteMany({});
+    await connection.collection('galleries').deleteMany({});
+    await connection.collection('banners').deleteMany({});
+    await connection.collection('contacts').deleteMany({});
+
     // Register admin and get auth token
     const registerResponse = await request(app.getHttpServer())
       .post('/auth/register')
       .send({
-        email: 'admin@test.com',
+        email: 'gallery-admin@test.com',
         password: 'Test123!@#',
-        name: 'Test Admin',
+        name: 'Gallery Test Admin',
       });
 
-    authToken = registerResponse.body.tokens.accessToken;
+    authToken = registerResponse.body.accessToken;
   });
 
   afterAll(async () => {
@@ -57,7 +65,7 @@ describe('Gallery (e2e)', () => {
           imageUrl: 'https://example.com/image1.jpg',
           title: 'Beautiful Nails',
           description: 'Artistic nail design',
-          category: 'designs',
+          category: 'nail-art',
           featured: true,
           isActive: true,
           sortIndex: 1,
@@ -67,7 +75,7 @@ describe('Gallery (e2e)', () => {
       expect(response.body).toHaveProperty('_id');
       expect(response.body.imageUrl).toBe('https://example.com/image1.jpg');
       expect(response.body.title).toBe('Beautiful Nails');
-      expect(response.body.category).toBe('designs');
+      expect(response.body.category).toBe('nail-art');
       expect(response.body.featured).toBe(true);
 
       createdGalleryId = response.body._id;
@@ -79,7 +87,7 @@ describe('Gallery (e2e)', () => {
         .send({
           imageUrl: 'https://example.com/image2.jpg',
           title: 'Elegant Design',
-          category: 'designs',
+          category: 'nail-art',
         })
         .expect(401);
     });
@@ -102,7 +110,7 @@ describe('Gallery (e2e)', () => {
         .send({
           imageUrl: 'https://example.com/image4.jpg',
           title: '', // Empty title
-          category: 'designs',
+          category: 'nail-art',
         })
         .expect(400);
     });
@@ -130,7 +138,7 @@ describe('Gallery (e2e)', () => {
           imageUrl: 'https://example.com/image6.jpg',
           title: 'Gel Nails Art',
           description: 'Creative gel nail art',
-          category: 'designs',
+          category: 'nail-art',
           featured: true,
           isActive: true,
         });
@@ -159,11 +167,11 @@ describe('Gallery (e2e)', () => {
 
     it('should filter gallery items by category', async () => {
       const response = await request(app.getHttpServer())
-        .get('/gallery?category=designs')
+        .get('/gallery?category=nail-art')
         .expect(200);
 
       expect(
-        response.body.data.every((g: any) => g.category === 'designs'),
+        response.body.data.every((g: any) => g.category === 'nail-art'),
       ).toBe(true);
     });
 

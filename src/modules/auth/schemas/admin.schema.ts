@@ -29,6 +29,5 @@ export class Admin extends Document {
 
 export const AdminSchema = SchemaFactory.createForClass(Admin);
 
-// Indexes
-AdminSchema.index({ email: 1 }, { unique: true });
+// Note: Email unique index is already created by @Prop({ unique: true })
 AdminSchema.index({ isActive: 1 });

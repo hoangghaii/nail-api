@@ -7,6 +7,7 @@ import { Gallery, GalleryDocument } from './schemas/gallery.schema';
 import { CreateGalleryDto, GalleryCategory } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
 import { QueryGalleryDto } from './dto/query-gallery.dto';
+import { StorageService } from '../storage/storage.service';
 
 describe('GalleryService', () => {
   let service: GalleryService;
@@ -34,6 +35,11 @@ describe('GalleryService', () => {
     exec: jest.fn(),
   };
 
+  const mockStorageService = {
+    uploadFile: jest.fn(),
+    deleteFile: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -41,6 +47,10 @@ describe('GalleryService', () => {
         {
           provide: getModelToken(Gallery.name),
           useValue: mockGalleryModel,
+        },
+        {
+          provide: StorageService,
+          useValue: mockStorageService,
         },
       ],
     }).compile();
@@ -101,9 +111,7 @@ describe('GalleryService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       const result = await service.findAll(query);
 
@@ -133,9 +141,7 @@ describe('GalleryService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       const result = await service.findAll(query);
 
@@ -154,9 +160,7 @@ describe('GalleryService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       await service.findAll(query);
 
@@ -174,9 +178,7 @@ describe('GalleryService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       await service.findAll(query);
 
@@ -201,9 +203,9 @@ describe('GalleryService', () => {
         exec: jest.fn().mockResolvedValue(null),
       } as any);
 
-      await expect(
-        service.findOne('507f1f77bcf86cd799439011'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('507f1f77bcf86cd799439011')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -216,7 +218,10 @@ describe('GalleryService', () => {
         exec: jest.fn().mockResolvedValue(updatedGallery),
       } as any);
 
-      const result = await service.update('507f1f77bcf86cd799439011', updateDto);
+      const result = await service.update(
+        '507f1f77bcf86cd799439011',
+        updateDto,
+      );
 
       expect(result).toEqual(updatedGallery);
       expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
@@ -239,19 +244,23 @@ describe('GalleryService', () => {
 
   describe('remove', () => {
     it('should delete a gallery item successfully', async () => {
+      jest.spyOn(model, 'findById').mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockGallery),
+      } as any);
       jest.spyOn(model, 'findByIdAndDelete').mockReturnValue({
         exec: jest.fn().mockResolvedValue(mockGallery),
       } as any);
 
       await service.remove('507f1f77bcf86cd799439011');
 
+      expect(model.findById).toHaveBeenCalledWith('507f1f77bcf86cd799439011');
       expect(model.findByIdAndDelete).toHaveBeenCalledWith(
         '507f1f77bcf86cd799439011',
       );
     });
 
     it('should throw NotFoundException if gallery item not found', async () => {
-      jest.spyOn(model, 'findByIdAndDelete').mockReturnValue({
+      jest.spyOn(model, 'findById').mockReturnValue({
         exec: jest.fn().mockResolvedValue(null),
       } as any);
 

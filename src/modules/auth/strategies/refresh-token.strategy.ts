@@ -23,7 +23,10 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
 
   validate(req: Request, payload: { sub: string; email: string }) {
-    const refreshToken = req.get('Authorization')?.replace('Bearer ', '').trim();
+    const refreshToken = req
+      .get('Authorization')
+      ?.replace('Bearer ', '')
+      .trim();
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token malformed');
     }

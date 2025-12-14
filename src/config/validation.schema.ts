@@ -18,6 +18,7 @@ export const validationSchema = Joi.object({
   JWT_REFRESH_EXPIRY: Joi.string().default('7d'),
 
   // Redis
+  REDIS_ENABLED: Joi.boolean().default(false),
   REDIS_HOST: Joi.string().default('localhost'),
   REDIS_PORT: Joi.number().default(6379),
   REDIS_PASSWORD: Joi.string().allow('').optional(),
@@ -26,11 +27,27 @@ export const validationSchema = Joi.object({
   FRONTEND_CLIENT_URL: Joi.string().uri().required(),
   FRONTEND_ADMIN_URL: Joi.string().uri().required(),
 
-  // Firebase
-  FIREBASE_PROJECT_ID: Joi.string().required(),
-  FIREBASE_PRIVATE_KEY: Joi.string().required(),
-  FIREBASE_CLIENT_EMAIL: Joi.string().email().required(),
-  FIREBASE_STORAGE_BUCKET: Joi.string().required(),
+  // Firebase (optional in test environment)
+  FIREBASE_PROJECT_ID: Joi.string().when('NODE_ENV', {
+    is: 'test',
+    then: Joi.string().default('test-project'),
+    otherwise: Joi.string().required(),
+  }),
+  FIREBASE_PRIVATE_KEY: Joi.string().when('NODE_ENV', {
+    is: 'test',
+    then: Joi.string().default('<from-service-account-json>'),
+    otherwise: Joi.string().required(),
+  }),
+  FIREBASE_CLIENT_EMAIL: Joi.string().when('NODE_ENV', {
+    is: 'test',
+    then: Joi.string().default('test@test.iam.gserviceaccount.com'),
+    otherwise: Joi.string().email().required(),
+  }),
+  FIREBASE_STORAGE_BUCKET: Joi.string().when('NODE_ENV', {
+    is: 'test',
+    then: Joi.string().default('test-bucket.appspot.com'),
+    otherwise: Joi.string().required(),
+  }),
 
   // Rate Limiting
   RATE_LIMIT_TTL: Joi.number().default(60000),

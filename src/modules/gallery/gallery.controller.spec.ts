@@ -4,6 +4,7 @@ import { GalleryService } from './gallery.service';
 import { CreateGalleryDto, GalleryCategory } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
 import { QueryGalleryDto } from './dto/query-gallery.dto';
+import { StorageService } from '../storage/storage.service';
 
 describe('GalleryController', () => {
   let controller: GalleryController;
@@ -28,6 +29,11 @@ describe('GalleryController', () => {
     remove: jest.fn(),
   };
 
+  const mockStorageService = {
+    uploadFile: jest.fn(),
+    deleteFile: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GalleryController],
@@ -35,6 +41,10 @@ describe('GalleryController', () => {
         {
           provide: GalleryService,
           useValue: mockGalleryService,
+        },
+        {
+          provide: StorageService,
+          useValue: mockStorageService,
         },
       ],
     }).compile();

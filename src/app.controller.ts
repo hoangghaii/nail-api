@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { AppService } from './app.service';
 import { Public } from './modules/auth/decorators/public.decorator';
 
@@ -13,6 +14,7 @@ export class AppController {
   }
 
   @Public()
+  @SkipThrottle()
   @Get('health')
   healthCheck() {
     return {

@@ -174,9 +174,7 @@ describe('BookingsService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       const result = await service.findAll(query);
 
@@ -207,9 +205,7 @@ describe('BookingsService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       const result = await service.findAll(query);
 
@@ -233,9 +229,7 @@ describe('BookingsService', () => {
       };
 
       jest.spyOn(model, 'find').mockReturnValue(findChain as any);
-      jest
-        .spyOn(model, 'countDocuments')
-        .mockResolvedValueOnce(1 as never);
+      jest.spyOn(model, 'countDocuments').mockResolvedValueOnce(1 as never);
 
       await service.findAll(query);
 
@@ -256,9 +250,7 @@ describe('BookingsService', () => {
         limit: 10,
       };
 
-      await expect(service.findAll(query)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(service.findAll(query)).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -291,9 +283,9 @@ describe('BookingsService', () => {
 
       jest.spyOn(model, 'findById').mockReturnValue(findByIdChain as any);
 
-      await expect(
-        service.findOne(mockBookingId.toString()),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findOne(mockBookingId.toString())).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -309,7 +301,9 @@ describe('BookingsService', () => {
         exec: jest.fn().mockResolvedValue(updatedBooking),
       };
 
-      jest.spyOn(model, 'findByIdAndUpdate').mockReturnValue(updateChain as any);
+      jest
+        .spyOn(model, 'findByIdAndUpdate')
+        .mockReturnValue(updateChain as any);
 
       const result = await service.updateStatus(
         mockBookingId.toString(),
@@ -344,7 +338,9 @@ describe('BookingsService', () => {
         exec: jest.fn().mockResolvedValue(null),
       };
 
-      jest.spyOn(model, 'findByIdAndUpdate').mockReturnValue(updateChain as any);
+      jest
+        .spyOn(model, 'findByIdAndUpdate')
+        .mockReturnValue(updateChain as any);
 
       await expect(
         service.updateStatus(mockBookingId.toString(), updateDto),

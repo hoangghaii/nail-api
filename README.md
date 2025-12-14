@@ -21,48 +21,57 @@ docker run -d -p 27017:27017 --name mongodb mongo:latest
 npm run start:dev
 
 # API runs on http://localhost:3000
+# Swagger API Documentation: http://localhost:3000/api
 ```
 
 ## 📚 Documentation
 
+- **API Documentation (Swagger):** http://localhost:3000/api (when running)
 - **Setup Guide:** [SETUP.md](./SETUP.md)
 - **Implementation Plan:** [plans/251212-1917-nail-api-implementation/plan.md](./plans/251212-1917-nail-api-implementation/plan.md)
 
 ## ✅ Current Status
 
-**Phases Completed: 4/8**
+**Phases Completed: 8/8** ✅ **ALL PHASES COMPLETE**
 
 - ✅ Phase 01: Foundation (Config, Security, Dependencies)
 - ✅ Phase 02: Database (MongoDB + 8 Schemas)
 - ✅ Phase 03: Authentication (JWT + Refresh Tokens)
 - ✅ Phase 04: Core Modules (Services, Bookings, Gallery) - 56/56 tests passing
-- ⏳ Phase 05: Admin Modules (Banners, Contacts, BusinessInfo)
-- ⏳ Phase 06: Security (Redis Rate Limiting)
-- ⏳ Phase 07: Storage (Firebase Integration)
-- ⏳ Phase 08: Testing (Unit & E2E)
+- ✅ Phase 05: Admin Modules (Banners, Contacts, BusinessInfo, HeroSettings) - 100/100 tests passing, Grade A
+- ✅ Phase 06: Security Hardening (Helmet, Rate Limiting, CORS) - 100/100 tests passing, Grade A-
+- ✅ Phase 07: Firebase Storage Integration - 100/100 tests passing, Grade B+
+- ✅ Phase 08: Testing & E2E - 72 E2E tests + 100 unit tests passing, 65% coverage, Grade B+
 
 ## 🎯 Features
 
 ### ✅ Implemented
+- **Swagger/OpenAPI Documentation** - Interactive API docs at `/api`
 - **JWT Authentication** with refresh token rotation
 - **Argon2 Password Hashing** (OWASP 2025 recommendation)
 - **MongoDB Integration** with Mongoose ODM
 - **Type-Safe Configuration** with validation
-- **Security Headers** (Helmet)
+- **Security Headers** (Helmet with CSP + HSTS)
 - **CORS** configured for React frontends
 - **Global Validation Pipes**
 - **Protected Routes** by default
+- **Rate Limiting** (Redis-backed with in-memory fallback)
+- **Auth Endpoint Throttling** (login: 5/15min, register: 3/hour)
 - **Services Module** - CRUD with enum categories, pricing, pagination
 - **Bookings Module** - Appointments with business hours validation (09:00-17:30)
 - **Gallery Module** - Portfolio images with enum categories
 - **Input Validation** - DTOs with class-validator, enum validation
 - **Pagination** - All list endpoints support page/limit (max 100)
-
-### ⏳ Coming Soon
-- Admin modules (Banners, Contacts, BusinessInfo, HeroSettings)
-- Firebase Storage for images
-- Redis rate limiting
-- Comprehensive E2E testing
+- **Banners Module** - Hero section content (public read, admin CRUD)
+- **Contacts Module** - Customer inquiries with status workflow
+- **BusinessInfo Module** - Business hours, contact details (singleton)
+- **HeroSettings Module** - Display mode configuration (singleton)
+- **Firebase Storage** - Image/video uploads with automatic cleanup on delete
+- **File Upload Validation** - Size (5MB images, 20MB videos) and type validation
+- **Multipart Form Data** - File upload endpoints for Gallery, Services, Banners
+- **Comprehensive Testing** - 72 E2E tests + 100 unit tests with 65% coverage
+- **E2E Test Coverage** - Auth flow, Services CRUD, Bookings flow, Gallery CRUD, protected routes
+- **Test Environment** - Dedicated test database and Firebase skip for CI/CD
 
 ## 🔐 API Endpoints
 
@@ -91,7 +100,8 @@ POST /bookings      # Create appointment booking
 POST /auth/logout   # Logout
 
 # Services (admin CRUD)
-POST   /services           # Create service
+POST   /services/upload    # Upload service with image file
+POST   /services           # Create service with URL
 PATCH  /services/:id       # Update service
 DELETE /services/:id       # Delete service
 
@@ -101,8 +111,28 @@ GET    /bookings/:id       # Get booking details
 PATCH  /bookings/:id/status # Update booking status
 
 # Gallery (admin CRUD)
-POST   /gallery            # Upload gallery image
+POST   /gallery/upload     # Upload gallery image file
+POST   /gallery            # Create gallery item with URL
 DELETE /gallery/:id        # Delete gallery image
+
+# Banners (admin CRUD)
+POST   /banners/upload/image # Upload banner image file
+POST   /banners/upload/video # Upload banner video file
+POST   /banners            # Create banner with URLs
+GET    /banners/:id        # Get banner details
+PATCH  /banners/:id        # Update banner
+DELETE /banners/:id        # Delete banner
+
+# Contacts (admin only)
+GET    /contacts           # List contacts (filterable by status)
+GET    /contacts/:id       # Get contact details
+PATCH  /contacts/:id/status # Update contact status
+
+# BusinessInfo (admin write, public read)
+PATCH  /business-info      # Update business info
+
+# HeroSettings (admin write, public read)
+PATCH  /hero-settings      # Update hero settings
 ```
 
 ## 🗄️ Database Schemas
