@@ -53,7 +53,7 @@ export class GalleryController {
         image: {
           type: 'string',
           format: 'binary',
-          description: 'Image file (max 5MB, jpg/jpeg/png/webp)',
+          description: 'Image file (max 10MB, jpg/jpeg/png/webp)',
         },
         title: { type: 'string', example: 'Summer Floral Design' },
         description: {
@@ -86,12 +86,12 @@ export class GalleryController {
   })
   @ApiResponse({ status: 400, description: 'Invalid input data or file' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 413, description: 'File too large (max 5MB)' })
+  @ApiResponse({ status: 413, description: 'File too large (max 10MB)' })
   async upload(
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
+          new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB
           new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
         ],
       }),

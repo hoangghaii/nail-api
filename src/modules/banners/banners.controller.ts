@@ -53,7 +53,7 @@ export class BannersController {
         image: {
           type: 'string',
           format: 'binary',
-          description: 'Banner image file (max 5MB, jpg/jpeg/png/webp)',
+          description: 'Banner image file (max 10MB, jpg/jpeg/png/webp)',
         },
         title: { type: 'string', example: 'Welcome to Our Nail Salon' },
         type: { type: 'string', enum: ['image', 'video'], example: 'image' },
@@ -69,12 +69,12 @@ export class BannersController {
   })
   @ApiResponse({ status: 400, description: 'Invalid input data or file' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 413, description: 'File too large (max 5MB)' })
+  @ApiResponse({ status: 413, description: 'File too large (max 10MB)' })
   async uploadImage(
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
+          new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB
           new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
         ],
       }),
@@ -99,7 +99,7 @@ export class BannersController {
         video: {
           type: 'string',
           format: 'binary',
-          description: 'Banner video file (max 20MB, mp4/webm)',
+          description: 'Banner video file (max 100MB, mp4/webm)',
         },
         title: { type: 'string', example: 'Welcome Video' },
         type: { type: 'string', enum: ['image', 'video'], example: 'video' },
@@ -115,12 +115,12 @@ export class BannersController {
   })
   @ApiResponse({ status: 400, description: 'Invalid input data or file' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 413, description: 'File too large (max 20MB)' })
+  @ApiResponse({ status: 413, description: 'File too large (max 100MB)' })
   async uploadVideo(
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 20 * 1024 * 1024 }), // 20MB
+          new MaxFileSizeValidator({ maxSize: 100 * 1024 * 1024 }), // 100MB
           new FileTypeValidator({ fileType: /(mp4|webm)$/ }),
         ],
       }),

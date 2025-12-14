@@ -30,8 +30,8 @@ import { AccessTokenGuard } from './modules/auth/guards/access-token.guard';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [
-        `.env.${process.env.NODE_ENV || 'development'}`,
         '.env',
+        `.env.${process.env.NODE_ENV || 'development'}`,
       ].filter(Boolean),
       load: [
         appConfig,

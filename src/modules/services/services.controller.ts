@@ -60,7 +60,7 @@ export class ServicesController {
         image: {
           type: 'string',
           format: 'binary',
-          description: 'Service image file (max 5MB, jpg/jpeg/png/webp)',
+          description: 'Service image file (max 10MB, jpg/jpeg/png/webp)',
         },
         name: { type: 'string', example: 'Classic Manicure' },
         description: {
@@ -86,12 +86,12 @@ export class ServicesController {
   })
   @ApiResponse({ status: 400, description: 'Invalid input data or file' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 413, description: 'File too large (max 5MB)' })
+  @ApiResponse({ status: 413, description: 'File too large (max 10MB)' })
   async upload(
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
+          new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB
           new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
         ],
       }),
