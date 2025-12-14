@@ -17,11 +17,11 @@ async function bootstrap() {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", 'data:', 'https://firebasestorage.googleapis.com'],
+          imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
           connectSrc: ["'self'"],
           fontSrc: ["'self'"],
           objectSrc: ["'none'"],
-          mediaSrc: ["'self'", 'https://firebasestorage.googleapis.com'],
+          mediaSrc: ["'self'", 'https://res.cloudinary.com'],
           frameSrc: ["'none'"],
         },
       },
@@ -65,7 +65,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Nail Salon API')
     .setDescription(
-      'Production-ready REST API for nail salon business with JWT authentication, MongoDB, and Firebase Storage',
+      'Production-ready REST API for nail salon business with JWT authentication, MongoDB, and Cloudinary Storage',
     )
     .setVersion('1.0')
     .addBearerAuth(

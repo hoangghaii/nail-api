@@ -96,8 +96,8 @@ export class BannersService {
       throw new NotFoundException(`Banner with ID ${id} not found`);
     }
 
-    // Delete image from Firebase Storage if it exists and is a Firebase URL
-    if (banner.imageUrl?.includes('firebasestorage.googleapis.com')) {
+    // Delete image from Cloudinary if it exists and is a Cloudinary URL
+    if (banner.imageUrl?.includes('res.cloudinary.com')) {
       try {
         await this.storageService.deleteFile(banner.imageUrl);
       } catch (error) {
@@ -105,8 +105,8 @@ export class BannersService {
       }
     }
 
-    // Delete video from Firebase Storage if it exists and is a Firebase URL
-    if (banner.videoUrl?.includes('firebasestorage.googleapis.com')) {
+    // Delete video from Cloudinary if it exists and is a Cloudinary URL
+    if (banner.videoUrl?.includes('res.cloudinary.com')) {
       try {
         await this.storageService.deleteFile(banner.videoUrl);
       } catch (error) {

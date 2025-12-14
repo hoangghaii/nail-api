@@ -12,7 +12,7 @@
 
 ### 🔧 Not Yet Implemented
 - Services, Bookings, Gallery, Banners, Contacts, BusinessInfo, HeroSettings CRUD APIs
-- Firebase Storage integration
+- Cloudinary Storage integration
 - Redis rate limiting
 - Unit & E2E tests
 
@@ -25,7 +25,7 @@
 - **Node.js** v18+
 - **MongoDB** running on port 27017 (or update `.env`)
 - **Redis** (optional, for Phase 06)
-- **Firebase** (optional, for Phase 07)
+- **Cloudinary** (optional, for Phase 07)
 
 ---
 
@@ -52,11 +52,10 @@ JWT_REFRESH_SECRET=your-strong-64-char-secret-here
 FRONTEND_CLIENT_URL=http://localhost:5173
 FRONTEND_ADMIN_URL=http://localhost:5174
 
-# Firebase (Configure in Phase 07)
-FIREBASE_PROJECT_ID=your-project-id
-FIREBASE_PRIVATE_KEY=your-private-key
-FIREBASE_CLIENT_EMAIL=your-email@project.iam.gserviceaccount.com
-FIREBASE_STORAGE_BUCKET=your-bucket.appspot.com
+# Cloudinary (Configure in Phase 07)
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
 ```
 
 **Generate secure JWT secrets:**
@@ -233,7 +232,7 @@ curl -X POST http://localhost:3000/auth/register \
 ### Phase 06: Security (Redis)
 **Guide:** `plans/251212-1917-nail-api-implementation/phase-06-security.md`
 
-### Phase 07: Storage (Firebase)
+### Phase 07: Storage (Cloudinary)
 **Guide:** `plans/251212-1917-nail-api-implementation/phase-07-storage.md`
 
 ### Phase 08: Testing

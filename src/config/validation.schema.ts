@@ -27,25 +27,20 @@ export const validationSchema = Joi.object({
   FRONTEND_CLIENT_URL: Joi.string().uri().required(),
   FRONTEND_ADMIN_URL: Joi.string().uri().required(),
 
-  // Firebase (optional in test environment)
-  FIREBASE_PROJECT_ID: Joi.string().when('NODE_ENV', {
+  // Cloudinary (optional in test environment)
+  CLOUDINARY_CLOUD_NAME: Joi.string().when('NODE_ENV', {
     is: 'test',
-    then: Joi.string().default('test-project'),
+    then: Joi.string().default('<your-cloud-name>'),
     otherwise: Joi.string().required(),
   }),
-  FIREBASE_PRIVATE_KEY: Joi.string().when('NODE_ENV', {
+  CLOUDINARY_API_KEY: Joi.string().when('NODE_ENV', {
     is: 'test',
-    then: Joi.string().default('<from-service-account-json>'),
+    then: Joi.string().default('<your-api-key>'),
     otherwise: Joi.string().required(),
   }),
-  FIREBASE_CLIENT_EMAIL: Joi.string().when('NODE_ENV', {
+  CLOUDINARY_API_SECRET: Joi.string().when('NODE_ENV', {
     is: 'test',
-    then: Joi.string().default('test@test.iam.gserviceaccount.com'),
-    otherwise: Joi.string().email().required(),
-  }),
-  FIREBASE_STORAGE_BUCKET: Joi.string().when('NODE_ENV', {
-    is: 'test',
-    then: Joi.string().default('test-bucket.appspot.com'),
+    then: Joi.string().default('<your-api-secret>'),
     otherwise: Joi.string().required(),
   }),
 

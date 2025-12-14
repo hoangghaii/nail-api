@@ -1,6 +1,6 @@
 # Nail Salon API
 
-Production-ready NestJS REST API for nail salon business with MongoDB, JWT authentication, and Firebase Storage.
+Production-ready NestJS REST API for nail salon business with MongoDB, JWT authentication, and Cloudinary Storage.
 
 ## 🚀 Quick Start
 
@@ -40,7 +40,7 @@ npm run start:dev
 - ✅ Phase 04: Core Modules (Services, Bookings, Gallery) - 56/56 tests passing
 - ✅ Phase 05: Admin Modules (Banners, Contacts, BusinessInfo, HeroSettings) - 100/100 tests passing, Grade A
 - ✅ Phase 06: Security Hardening (Helmet, Rate Limiting, CORS) - 100/100 tests passing, Grade A-
-- ✅ Phase 07: Firebase Storage Integration - 100/100 tests passing, Grade B+
+- ✅ Phase 07: Cloudinary Storage Integration - 100/100 tests passing, Grade B+
 - ✅ Phase 08: Testing & E2E - 72 E2E tests + 100 unit tests passing, 65% coverage, Grade B+
 
 ## 🎯 Features
@@ -66,12 +66,12 @@ npm run start:dev
 - **Contacts Module** - Customer inquiries with status workflow
 - **BusinessInfo Module** - Business hours, contact details (singleton)
 - **HeroSettings Module** - Display mode configuration (singleton)
-- **Firebase Storage** - Image/video uploads with automatic cleanup on delete
+- **Cloudinary Storage** - Image/video uploads with automatic cleanup on delete
 - **File Upload Validation** - Size (5MB images, 20MB videos) and type validation
 - **Multipart Form Data** - File upload endpoints for Gallery, Services, Banners
 - **Comprehensive Testing** - 72 E2E tests + 100 unit tests with 65% coverage
 - **E2E Test Coverage** - Auth flow, Services CRUD, Bookings flow, Gallery CRUD, protected routes
-- **Test Environment** - Dedicated test database and Firebase skip for CI/CD
+- **Test Environment** - Dedicated test database and Cloudinary skip for CI/CD
 
 ## 🔐 API Endpoints
 
@@ -155,7 +155,7 @@ PATCH  /hero-settings      # Update hero settings
 - **Password Hashing:** Argon2
 - **Validation:** class-validator + class-transformer
 - **Security:** Helmet, CORS
-- **Storage:** Firebase Storage (planned)
+- **Storage:** Cloudinary
 - **Cache/Rate Limit:** Redis (planned)
 
 ## 📋 Scripts

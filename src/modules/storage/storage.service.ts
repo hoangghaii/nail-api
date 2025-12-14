@@ -1,61 +1,76 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as admin from 'firebase-admin';
+import { v2 as cloudinary } from 'cloudinary';
 
 @Injectable()
 export class StorageService implements OnModuleInit {
-  private bucket: admin.storage.Storage;
-  private bucketInstance: ReturnType<admin.storage.Storage['bucket']>;
-
   constructor(private readonly configService: ConfigService) {}
 
   async onModuleInit() {
-    const privateKey = this.configService.get<string>('firebase.privateKey');
+    const cloudName = this.configService.get<string>('cloudinary.cloudName');
+    const apiKey = this.configService.get<string>('cloudinary.apiKey');
+    const apiSecret = this.configService.get<string>('cloudinary.apiSecret');
     const nodeEnv =
       this.configService.get<string>('app.nodeEnv') || process.env.NODE_ENV;
 
-    // Skip Firebase init in test environment if credentials not configured
+    // Skip Cloudinary init in test environment if credentials not configured
     if (
       nodeEnv === 'test' &&
-      (!privateKey ||
-        privateKey === '<from-service-account-json>' ||
-        privateKey.includes('from-service-account-json'))
+      (!cloudName || cloudName === '<your-cloud-name>')
     ) {
       console.log(
-        '[StorageService] Skipping Firebase initialization in test environment',
+        '[StorageService] Skipping Cloudinary initialization in test environment',
       );
       return;
     }
 
-    if (!admin.apps.length) {
-      admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: this.configService.get<string>('firebase.projectId'),
-          privateKey,
-          clientEmail: this.configService.get<string>('firebase.clientEmail'),
-        }),
-        storageBucket: this.configService.get<string>('firebase.storageBucket'),
-      });
-    }
-    this.bucket = admin.storage();
-    this.bucketInstance = this.bucket.bucket();
+    cloudinary.config({
+      cloud_name: cloudName,
+      api_key: apiKey,
+      api_secret: apiSecret,
+      secure: true,
+    });
   }
 
   async uploadFile(file: Express.Multer.File, folder: string): Promise<string> {
-    const fileName = `${folder}/${Date.now()}-${file.originalname}`;
-    const fileUpload = this.bucketInstance.file(fileName);
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder,
+          resource_type: 'auto', // Automatically detect file type (image/video)
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else if (result) {
+            resolve(result.secure_url);
+          } else {
+            reject(new Error('Upload failed: No result returned'));
+          }
+        },
+      );
 
-    await fileUpload.save(file.buffer, {
-      contentType: file.mimetype,
-      public: true,
+      uploadStream.end(file.buffer);
     });
-
-    return fileUpload.publicUrl();
   }
 
   async deleteFile(fileUrl: string): Promise<void> {
-    const pathSegments = new URL(fileUrl).pathname.split('/');
-    const fileName = pathSegments.slice(-2).join('/');
-    await this.bucketInstance.file(fileName).delete();
+    // Extract public_id from Cloudinary URL
+    // Example URL: https://res.cloudinary.com/<cloud_name>/image/upload/v1234567890/folder/filename.jpg
+    const urlParts = fileUrl.split('/');
+    const uploadIndex = urlParts.findIndex((part) => part === 'upload');
+    
+    if (uploadIndex === -1) {
+      throw new Error('Invalid Cloudinary URL');
+    }
+
+    // Get everything after 'upload/vXXXXXXXXXX/' or 'upload/'
+    const publicIdWithExtension = urlParts.slice(uploadIndex + 2).join('/');
+    
+    // Remove file extension
+    const publicId = publicIdWithExtension.replace(/\.[^/.]+$/, '');
+
+    await cloudinary.uploader.destroy(publicId);
   }
 }
+

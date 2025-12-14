@@ -108,8 +108,8 @@ export class ServicesService {
       throw new NotFoundException(`Service with ID ${id} not found`);
     }
 
-    // Delete image from Firebase Storage if it exists and is a Firebase URL
-    if (service.imageUrl?.includes('firebasestorage.googleapis.com')) {
+    // Delete image from Cloudinary if it exists and is a Cloudinary URL
+    if (service.imageUrl?.includes('res.cloudinary.com')) {
       try {
         await this.storageService.deleteFile(service.imageUrl);
       } catch (error) {

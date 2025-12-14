@@ -11,7 +11,7 @@ import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import redisConfig from './config/redis.config';
-import firebaseConfig from './config/firebase.config';
+import cloudinaryConfig from './config/cloudinary.config';
 import rateLimitConfig from './config/rate-limit.config';
 import { validationSchema } from './config/validation.schema';
 import { AuthModule } from './modules/auth/auth.module';
@@ -29,13 +29,16 @@ import { AccessTokenGuard } from './modules/auth/guards/access-token.guard';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: [
+        `.env.${process.env.NODE_ENV || 'development'}`,
+        '.env',
+      ].filter(Boolean),
       load: [
         appConfig,
         databaseConfig,
         jwtConfig,
         redisConfig,
-        firebaseConfig,
+        cloudinaryConfig,
         rateLimitConfig,
       ],
       validationSchema,
