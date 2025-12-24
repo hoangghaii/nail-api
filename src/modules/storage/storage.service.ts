@@ -59,18 +59,17 @@ export class StorageService implements OnModuleInit {
     // Example URL: https://res.cloudinary.com/<cloud_name>/image/upload/v1234567890/folder/filename.jpg
     const urlParts = fileUrl.split('/');
     const uploadIndex = urlParts.findIndex((part) => part === 'upload');
-    
+
     if (uploadIndex === -1) {
       throw new Error('Invalid Cloudinary URL');
     }
 
     // Get everything after 'upload/vXXXXXXXXXX/' or 'upload/'
     const publicIdWithExtension = urlParts.slice(uploadIndex + 2).join('/');
-    
+
     // Remove file extension
     const publicId = publicIdWithExtension.replace(/\.[^/.]+$/, '');
 
     await cloudinary.uploader.destroy(publicId);
   }
 }
-

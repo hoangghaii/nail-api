@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, HydratedDocument } from 'mongoose';
+import { Document, HydratedDocument, Types } from 'mongoose';
 
 export type GalleryDocument = HydratedDocument<Gallery>;
 
@@ -14,8 +14,11 @@ export class Gallery extends Document {
   @Prop()
   description?: string;
 
-  @Prop({ required: true })
-  category: string; // all, extensions, manicure, nail-art, pedicure, seasonal
+  @Prop({ type: Types.ObjectId, ref: 'GalleryCategory', default: null })
+  categoryId: Types.ObjectId | null;
+
+  @Prop({ required: false })
+  category?: string; // DEPRECATED: all, extensions, manicure, nail-art, pedicure, seasonal
 
   @Prop()
   price?: string; // e.g., "$45", "$60-80"
@@ -36,6 +39,7 @@ export class Gallery extends Document {
 export const GallerySchema = SchemaFactory.createForClass(Gallery);
 
 // Indexes
-GallerySchema.index({ category: 1, sortIndex: 1 });
+GallerySchema.index({ categoryId: 1, sortIndex: 1 });
+GallerySchema.index({ category: 1, sortIndex: 1 }); // DEPRECATED: Keep for backward compat
 GallerySchema.index({ isActive: 1 });
 GallerySchema.index({ featured: 1 });

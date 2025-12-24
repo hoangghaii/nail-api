@@ -206,9 +206,9 @@ describe('Services (e2e)', () => {
         .get('/services?category=manicure')
         .expect(200);
 
-      expect(response.body.data.every((s: any) => s.category === 'manicure')).toBe(
-        true,
-      );
+      expect(
+        response.body.data.every((s: any) => s.category === 'manicure'),
+      ).toBe(true);
     });
 
     it('should filter services by featured status', async () => {

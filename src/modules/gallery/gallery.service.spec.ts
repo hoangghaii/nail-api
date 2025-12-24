@@ -8,6 +8,7 @@ import { CreateGalleryDto, GalleryCategory } from './dto/create-gallery.dto';
 import { UpdateGalleryDto } from './dto/update-gallery.dto';
 import { QueryGalleryDto } from './dto/query-gallery.dto';
 import { StorageService } from '../storage/storage.service';
+import { GalleryCategoryService } from '../gallery-category/gallery-category.service';
 
 describe('GalleryService', () => {
   let service: GalleryService;
@@ -18,10 +19,27 @@ describe('GalleryService', () => {
     imageUrl: 'https://example.com/image.jpg',
     title: 'Beautiful Nails',
     description: 'Artistic nail design',
+    categoryId: '507f1f77bcf86cd799439099',
     category: GalleryCategory.NAIL_ART,
+    price: '$45',
+    duration: '60 minutes',
     featured: true,
     isActive: true,
     sortIndex: 1,
+  };
+
+  const mockAllCategory = {
+    _id: '507f1f77bcf86cd799439099',
+    name: 'All',
+    slug: 'all',
+    description: 'All designs',
+  };
+
+  const mockCategory = {
+    _id: '507f1f77bcf86cd799439098',
+    name: 'Nail Art',
+    slug: 'nail-art',
+    description: 'Nail art designs',
   };
 
   const mockGalleryModel = {
@@ -40,6 +58,11 @@ describe('GalleryService', () => {
     deleteFile: jest.fn(),
   };
 
+  const mockGalleryCategoryService = {
+    findBySlug: jest.fn(),
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -51,6 +74,10 @@ describe('GalleryService', () => {
         {
           provide: StorageService,
           useValue: mockStorageService,
+        },
+        {
+          provide: GalleryCategoryService,
+          useValue: mockGalleryCategoryService,
         },
       ],
     }).compile();
@@ -68,12 +95,58 @@ describe('GalleryService', () => {
   });
 
   describe('create', () => {
-    it('should create a gallery item successfully', async () => {
+    it('should create a gallery item with auto-assigned "all" category', async () => {
       const createDto: CreateGalleryDto = {
         imageUrl: 'https://example.com/new-image.jpg',
         title: 'Elegant Design',
         description: 'French manicure',
-        category: GalleryCategory.NAIL_ART,
+        price: '$45',
+        duration: '60 minutes',
+      };
+
+      const savedGallery = {
+        ...createDto,
+        _id: '507f1f77bcf86cd799439012',
+        categoryId: mockAllCategory._id,
+      };
+
+      mockGalleryCategoryService.findBySlug.mockResolvedValue(mockAllCategory);
+
+      const saveMock = jest.fn().mockResolvedValue(savedGallery);
+      const mockInstance = {
+        save: saveMock,
+      };
+
+      // Create a constructor function with findById method
+      const mockConstructor: any = function (dto: any) {
+        return mockInstance;
+      };
+      mockConstructor.findById = jest.fn().mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue({
+            ...savedGallery,
+            categoryId: mockAllCategory,
+          }),
+        }),
+      });
+
+      (service as any).galleryModel = mockConstructor;
+
+      const result = await service.create(createDto);
+
+      expect(result).toBeDefined();
+      expect(mockGalleryCategoryService.findBySlug).toHaveBeenCalledWith('all');
+      expect(saveMock).toHaveBeenCalled();
+    });
+
+    it('should create a gallery item with explicit categoryId', async () => {
+      const createDto: CreateGalleryDto = {
+        imageUrl: 'https://example.com/new-image.jpg',
+        title: 'Elegant Design',
+        description: 'French manicure',
+        categoryId: mockCategory._id,
+        price: '$45',
+        duration: '60 minutes',
       };
 
       const savedGallery = {
@@ -81,19 +154,34 @@ describe('GalleryService', () => {
         _id: '507f1f77bcf86cd799439012',
       };
 
-      const saveMock = jest.fn().mockResolvedValue(savedGallery);
+      mockGalleryCategoryService.findOne.mockResolvedValue(mockCategory);
 
-      // Mock the model constructor
+      const saveMock = jest.fn().mockResolvedValue(savedGallery);
       const mockInstance = {
         save: saveMock,
       };
-      (service as any).galleryModel = function (dto: any) {
+
+      // Create a constructor function with findById method
+      const mockConstructor: any = function (dto: any) {
         return mockInstance;
       };
+      mockConstructor.findById = jest.fn().mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue({
+            ...savedGallery,
+            categoryId: mockCategory,
+          }),
+        }),
+      });
+
+      (service as any).galleryModel = mockConstructor;
 
       const result = await service.create(createDto);
 
       expect(result).toBeDefined();
+      expect(mockGalleryCategoryService.findOne).toHaveBeenCalledWith(
+        mockCategory._id,
+      );
       expect(saveMock).toHaveBeenCalled();
     });
   });
@@ -104,6 +192,7 @@ describe('GalleryService', () => {
       const galleryItems = [mockGallery];
 
       const findChain = {
+        populate: jest.fn().mockReturnThis(),
         sort: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
@@ -134,6 +223,7 @@ describe('GalleryService', () => {
       };
 
       const findChain = {
+        populate: jest.fn().mockReturnThis(),
         sort: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
@@ -153,6 +243,7 @@ describe('GalleryService', () => {
       const query: QueryGalleryDto = { featured: true, page: 1, limit: 10 };
 
       const findChain = {
+        populate: jest.fn().mockReturnThis(),
         sort: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
@@ -171,6 +262,7 @@ describe('GalleryService', () => {
       const query: QueryGalleryDto = { isActive: true, page: 1, limit: 10 };
 
       const findChain = {
+        populate: jest.fn().mockReturnThis(),
         sort: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
@@ -189,7 +281,9 @@ describe('GalleryService', () => {
   describe('findOne', () => {
     it('should return a gallery item by id', async () => {
       jest.spyOn(model, 'findById').mockReturnValue({
-        exec: jest.fn().mockResolvedValue(mockGallery),
+        populate: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(mockGallery),
+        }),
       } as any);
 
       const result = await service.findOne('507f1f77bcf86cd799439011');
@@ -200,7 +294,9 @@ describe('GalleryService', () => {
 
     it('should throw NotFoundException if gallery item not found', async () => {
       jest.spyOn(model, 'findById').mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
+        populate: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(null),
+        }),
       } as any);
 
       await expect(service.findOne('507f1f77bcf86cd799439011')).rejects.toThrow(
@@ -215,7 +311,9 @@ describe('GalleryService', () => {
       const updatedGallery = { ...mockGallery, ...updateDto };
 
       jest.spyOn(model, 'findByIdAndUpdate').mockReturnValue({
-        exec: jest.fn().mockResolvedValue(updatedGallery),
+        populate: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(updatedGallery),
+        }),
       } as any);
 
       const result = await service.update(
@@ -224,16 +322,36 @@ describe('GalleryService', () => {
       );
 
       expect(result).toEqual(updatedGallery);
-      expect(model.findByIdAndUpdate).toHaveBeenCalledWith(
+    });
+
+    it('should update with categoryId validation', async () => {
+      const updateDto: UpdateGalleryDto = { categoryId: mockCategory._id };
+      const updatedGallery = { ...mockGallery, categoryId: mockCategory._id };
+
+      mockGalleryCategoryService.findOne.mockResolvedValue(mockCategory);
+
+      jest.spyOn(model, 'findByIdAndUpdate').mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(updatedGallery),
+        }),
+      } as any);
+
+      const result = await service.update(
         '507f1f77bcf86cd799439011',
         updateDto,
-        { new: true },
+      );
+
+      expect(result).toEqual(updatedGallery);
+      expect(mockGalleryCategoryService.findOne).toHaveBeenCalledWith(
+        mockCategory._id,
       );
     });
 
     it('should throw NotFoundException if gallery item not found', async () => {
       jest.spyOn(model, 'findByIdAndUpdate').mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
+        populate: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(null),
+        }),
       } as any);
 
       await expect(

@@ -45,30 +45,39 @@ export class CreateGalleryDto {
   @IsOptional()
   description?: string;
 
-  @ApiProperty({
-    description: 'Gallery category',
-    enum: GalleryCategory,
-    example: GalleryCategory.NAIL_ART,
+  @ApiPropertyOptional({
+    description: 'Gallery category ID (defaults to "all" category if not provided)',
+    example: '507f1f77bcf86cd799439011',
   })
-  @IsEnum(GalleryCategory)
-  @IsNotEmpty()
-  category: GalleryCategory;
+  @IsString()
+  @IsOptional()
+  categoryId?: string;
 
   @ApiPropertyOptional({
+    description: 'DEPRECATED: Use categoryId instead. Gallery category enum',
+    enum: GalleryCategory,
+    example: GalleryCategory.NAIL_ART,
+    deprecated: true,
+  })
+  @IsEnum(GalleryCategory)
+  @IsOptional()
+  category?: GalleryCategory;
+
+  @ApiProperty({
     description: 'Price for this design',
     example: '$45',
   })
   @IsString()
-  @IsOptional()
-  price?: string;
+  @IsNotEmpty()
+  price: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Duration for this design',
     example: '60 minutes',
   })
   @IsString()
-  @IsOptional()
-  duration?: string;
+  @IsNotEmpty()
+  duration: string;
 
   @ApiPropertyOptional({
     description: 'Whether the gallery item is featured',

@@ -18,6 +18,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ServicesModule } from './modules/services/services.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
 import { GalleryModule } from './modules/gallery/gallery.module';
+import { GalleryCategoryModule } from './modules/gallery-category/gallery-category.module';
 import { BannersModule } from './modules/banners/banners.module';
 import { ContactsModule } from './modules/contacts/contacts.module';
 import { BusinessInfoModule } from './modules/business-info/business-info.module';
@@ -97,6 +98,7 @@ import { AccessTokenGuard } from './modules/auth/guards/access-token.guard';
     ServicesModule,
     BookingsModule,
     GalleryModule,
+    GalleryCategoryModule,
     BannersModule,
     ContactsModule,
     BusinessInfoModule,

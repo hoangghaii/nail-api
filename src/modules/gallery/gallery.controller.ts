@@ -48,7 +48,7 @@ export class GalleryController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: ['image', 'title', 'category'],
+      required: ['image', 'title', 'price', 'duration'],
       properties: {
         image: {
           type: 'string',
@@ -59,6 +59,11 @@ export class GalleryController {
         description: {
           type: 'string',
           example: 'Beautiful floral nail art design',
+        },
+        categoryId: {
+          type: 'string',
+          example: '507f1f77bcf86cd799439011',
+          description: 'Category ID (defaults to "all" if not provided)',
         },
         category: {
           type: 'string',
@@ -71,6 +76,8 @@ export class GalleryController {
             'seasonal',
           ],
           example: 'nail-art',
+          deprecated: true,
+          description: 'DEPRECATED: Use categoryId instead',
         },
         price: { type: 'string', example: '$45' },
         duration: { type: 'string', example: '60 minutes' },

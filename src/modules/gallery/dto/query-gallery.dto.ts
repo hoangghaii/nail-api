@@ -1,13 +1,29 @@
-import { IsOptional, IsBoolean, Min, Max, IsEnum } from 'class-validator';
+import {
+  IsOptional,
+  IsBoolean,
+  IsString,
+  Min,
+  Max,
+  IsEnum,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { GalleryCategory } from './create-gallery.dto';
 
 export class QueryGalleryDto {
   @ApiPropertyOptional({
-    description: 'Filter by gallery category',
+    description: 'Filter by gallery category ID',
+    example: '507f1f77bcf86cd799439011',
+  })
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
+
+  @ApiPropertyOptional({
+    description: 'DEPRECATED: Use categoryId instead. Filter by gallery category enum',
     enum: GalleryCategory,
     example: GalleryCategory.NAIL_ART,
+    deprecated: true,
   })
   @IsOptional()
   @IsEnum(GalleryCategory)

@@ -15,7 +15,10 @@ describe('GalleryController', () => {
     imageUrl: 'https://example.com/image.jpg',
     title: 'Beautiful Nails',
     description: 'Artistic nail design',
+    categoryId: '507f1f77bcf86cd799439099',
     category: 'designs',
+    price: '$45',
+    duration: '60 minutes',
     featured: true,
     isActive: true,
     sortIndex: 1,
@@ -68,6 +71,8 @@ describe('GalleryController', () => {
         title: 'Elegant Design',
         description: 'French manicure',
         category: GalleryCategory.NAIL_ART,
+        price: '$45',
+        duration: '60 minutes',
       };
 
       mockGalleryService.create.mockResolvedValue({
