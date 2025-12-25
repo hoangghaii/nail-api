@@ -1,0 +1,197 @@
+# =============================================================================
+# Dependencies (Will be installed by npm ci/install)
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package manager lock files (except package-lock.json if using npm)
+# yarn.lock
+# pnpm-lock.yaml
+
+# =============================================================================
+# Build Output (Generated during Docker build)
+# =============================================================================
+dist/
+build/
+*.local
+
+# =============================================================================
+# Development & IDE Files
+# =============================================================================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# IntelliJ IDEA / WebStorm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# =============================================================================
+# Git
+# =============================================================================
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# =============================================================================
+# Environment Files (SECURITY!)
+# =============================================================================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+*.env
+!.env.example
+
+# =============================================================================
+# Testing
+# =============================================================================
+test/
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+*.spec.ts
+jest.config.js
+
+# =============================================================================
+# Documentation
+# =============================================================================
+README.md
+CHANGELOG.md
+LICENSE
+CONTRIBUTING.md
+docs/
+plans/
+*.md
+!package.json
+
+# =============================================================================
+# Docker Files (Don't include Docker files in Docker!)
+# =============================================================================
+Dockerfile
+Dockerfile.*
+docker-compose*.yml
+.dockerignore
+
+# =============================================================================
+# CI/CD
+# =============================================================================
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+.jenkins/
+.husky/
+
+# =============================================================================
+# Logs
+# =============================================================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =============================================================================
+# OS Files
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# =============================================================================
+# Temporary Files
+# =============================================================================
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# =============================================================================
+# Optional: Development Tools
+# =============================================================================
+.eslintrc*
+.eslintignore
+.eslintcache
+.prettierrc*
+.prettierignore
+.prettiercache
+.editorconfig
+# Keep TypeScript config and NestJS CLI config for build
+# tsconfig*.json
+# nest-cli.json
+
+# =============================================================================
+# Optional: Keep These if Needed
+# =============================================================================
+
+# KEEP: package-lock.json (if using npm)
+!package-lock.json
+
+# KEEP: yarn.lock (if using yarn)
+# !yarn.lock
+
+# KEEP: pnpm-lock.yaml (if using pnpm)
+# !pnpm-lock.yaml
+
+# =============================================================================
+# Project Specific
+# =============================================================================
+
+# Claude Code assistant
+.claude/
+
+# Repomix
+.repomixignore
+repomix-output.xml
+
+# Scripts (migration/seed scripts not needed in production)
+scripts/
+
+# Test artifacts
+test-*
+
+# Project instructions
+CLAUDE.md
+GEMINI.md
+SETUP.md

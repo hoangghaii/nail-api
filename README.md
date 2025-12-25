@@ -4,6 +4,18 @@ Production-ready NestJS REST API for nail salon business with MongoDB, JWT authe
 
 ## 🚀 Quick Start
 
+### Option 1: Docker Compose (Recommended)
+
+```bash
+# Start all services (API + MongoDB + Redis)
+docker compose up
+
+# API runs on http://localhost:3000
+# Swagger API Documentation: http://localhost:3000/api
+```
+
+### Option 2: Local Development
+
 ```bash
 # Install dependencies
 npm install
@@ -27,7 +39,9 @@ npm run start:dev
 ## 📚 Documentation
 
 - **API Documentation (Swagger):** http://localhost:3000/api (when running)
+- **Docker Guide:** [DOCKER.md](./DOCKER.md) - Docker deployment and troubleshooting
 - **Setup Guide:** [SETUP.md](./SETUP.md)
+- **Testing Guide:** [test/README-TESTING.md](./test/README-TESTING.md)
 - **Implementation Plan:** [plans/251212-1917-nail-api-implementation/plan.md](./plans/251212-1917-nail-api-implementation/plan.md)
 
 ## ✅ Current Status
@@ -174,11 +188,33 @@ npm run test         # Unit tests
 npm run test:e2e     # E2E tests
 npm run test:cov     # Test coverage
 
+# Database
+npm run seed:categories    # Seed gallery categories
+npm run migrate:categories # Migrate galleries to use categoryId
+
 # Code Quality
 npx tsc --noEmit     # TypeScript check
 npm run lint         # ESLint
 npm run format       # Prettier
 ```
+
+## 🐳 Docker
+
+Docker setup with multi-stage builds, development hot-reload, and production optimization.
+
+```bash
+# Development (with MongoDB + Redis)
+docker compose up
+
+# Production
+docker compose -f docker-compose.prod.yml up -d
+
+# Build only
+docker build --target production -t nail-api:prod .
+docker build --target development -t nail-api:dev .
+```
+
+See [DOCKER.md](./DOCKER.md) for complete Docker deployment guide.
 
 ## 🌐 Frontend Integration
 
