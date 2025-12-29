@@ -50,8 +50,10 @@ FROM dependencies AS builder
 # Copy source code
 COPY . .
 
+COPY .env.production .env.production
+
 # Build the application
-RUN npm run build && \
+RUN NODE_ENV=production npm run build && \
   npm prune --production && \
   npm cache clean --force && \
   rm -rf \
