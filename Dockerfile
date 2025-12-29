@@ -35,6 +35,9 @@ COPY . .
 # Expose API port
 EXPOSE 3000
 
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
 # Start in development mode with hot-reload
 CMD ["npm", "run", "start:dev"]
 
@@ -53,24 +56,13 @@ RUN npm run build && \
   npm cache clean --force && \
   rm -rf \
   src \
-  node_modules \
-  .git \
-  .github \
-  tests \
-  *.md \
-  .prettierrc* \
-  .eslintrc* \
-  tsconfig.json \
-  vite.config.ts
+  tsconfig*.json
 
 
 # ==========================================
 # PRODUCTION DEPENDENCIES LAYER
 # ==========================================
 FROM base AS production-deps
-
-# Install only production dependencies
-ENV NODE_ENV=production
 
 # Use BuildKit cache for faster builds
 RUN --mount=type=cache,target=/root/.npm \
