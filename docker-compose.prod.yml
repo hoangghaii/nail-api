@@ -13,31 +13,11 @@ services:
     restart: always
     ports:
       - '3000:3000'
+    env_file:
+      - .env.production
     environment:
       NODE_ENV: production
       PORT: 3000
-      # MongoDB connection - Use MongoDB Atlas or external MongoDB in production
-      MONGODB_URI: ${MONGODB_URI}
-      MONGODB_MAX_POOL_SIZE: ${MONGODB_MAX_POOL_SIZE:-20}
-      # Redis connection
-      REDIS_HOST: ${REDIS_HOST:-redis}
-      REDIS_PORT: ${REDIS_PORT:-6379}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-      # JWT secrets - MUST be set via environment variables
-      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
-      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
-      JWT_ACCESS_EXPIRY: ${JWT_ACCESS_EXPIRY:-15m}
-      JWT_REFRESH_EXPIRY: ${JWT_REFRESH_EXPIRY:-7d}
-      # CORS
-      FRONTEND_CLIENT_URL: ${FRONTEND_CLIENT_URL}
-      FRONTEND_ADMIN_URL: ${FRONTEND_ADMIN_URL}
-      # Cloudinary
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
-      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-      # Rate Limiting
-      RATE_LIMIT_TTL: ${RATE_LIMIT_TTL:-60000}
-      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-100}
     networks:
       - nail-network
     healthcheck:
