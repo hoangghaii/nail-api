@@ -19,9 +19,9 @@ FROM base AS dependencies
 
 # Use BuildKit cache mount for maximum speed
 # Cache persists across builds, even when rebuilding from scratch
+# Note: Do not use 'npm cache clean' with BuildKit cache mounts - causes ENOTEMPTY errors
 RUN --mount=type=cache,target=/root/.npm \
-  npm ci --ignore-scripts && \
-  npm cache clean --force
+  npm ci --ignore-scripts
 
 
 # ==========================================
@@ -50,12 +50,12 @@ FROM dependencies AS builder
 # Copy source code
 COPY . .
 
-COPY .env.production .env.production
+# Note: .env files are provided at runtime via docker-compose env_file
+# Build does not need .env (NestJS compiles TypeScript, doesn't process env vars)
 
 # Build the application
 RUN NODE_ENV=production npm run build && \
   npm prune --production && \
-  npm cache clean --force && \
   rm -rf \
   src \
   tsconfig*.json
@@ -67,9 +67,9 @@ RUN NODE_ENV=production npm run build && \
 FROM base AS production-deps
 
 # Use BuildKit cache for faster builds
+# Note: Do not use 'npm cache clean' with BuildKit cache mounts - causes ENOTEMPTY errors
 RUN --mount=type=cache,target=/root/.npm \
-  npm ci --ignore-scripts --omit=dev && \
-  npm cache clean --force
+  npm ci --ignore-scripts --omit=dev
 
 
 # ==========================================
